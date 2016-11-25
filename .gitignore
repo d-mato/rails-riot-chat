@@ -21,3 +21,4 @@
 .byebug_history
 
 /vendor/bundle
+/frontend/node_modules
