@@ -2,8 +2,13 @@ class CommentsController < ApplicationController
   before_action :set_comment, only: [:show, :update, :destroy]
 
   # GET /comments
+  # GET /channels/:channel_id/comments
   def index
-    @comments = Comment.all
+    if params[:channel_id].present?
+      @comments = Channel.find(params[:channel_id]).comments
+    else
+      @comments = Comment.all
+    end
 
     render json: @comments
   end
@@ -13,12 +18,13 @@ class CommentsController < ApplicationController
     render json: @comment
   end
 
-  # POST /comments
+  # POST /channels/:channel_id/comments
   def create
     @comment = Comment.new(comment_params)
+    @comment.channel = Channel.find(params[:channel_id])
 
     if @comment.save
-      render json: @comment, status: :created, location: @comment
+      render json: @comment, status: :created
     else
       render json: @comment.errors, status: :unprocessable_entity
     end

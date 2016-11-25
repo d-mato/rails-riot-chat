@@ -22,3 +22,10 @@
 
 /vendor/bundle
 /frontend/node_modules
+
+/public/bundle.js
+/public/*.woff2
+/public/*.svg
+/public/*.ttf
+/public/*.eot
+/public/*.woff

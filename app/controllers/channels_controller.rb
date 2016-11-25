@@ -1,6 +1,4 @@
 class ChannelsController < ApplicationController
-  before_action :set_channel, only: [:show, :update, :destroy]
-
   # GET /channels
   def index
     @channels = Channel.all
@@ -10,6 +8,7 @@ class ChannelsController < ApplicationController
 
   # GET /channels/1
   def show
+    @channel = Channel.find_by(slug: params[:id])
     render json: @channel
   end
 
@@ -26,6 +25,7 @@ class ChannelsController < ApplicationController
 
   # PATCH/PUT /channels/1
   def update
+    @channel = Channel.find(params[:id])
     if @channel.update(channel_params)
       render json: @channel
     else
@@ -35,17 +35,13 @@ class ChannelsController < ApplicationController
 
   # DELETE /channels/1
   def destroy
+    @channel = Channel.find(params[:id])
     @channel.destroy
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_channel
-      @channel = Channel.find(params[:id])
-    end
-
     # Only allow a trusted parameter "white list" through.
     def channel_params
-      params.require(:channel).permit(:name)
+      params.require(:channel).permit(:name, :slug)
     end
 end
