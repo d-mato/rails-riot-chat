@@ -1,7 +1,16 @@
+import RiotControl from 'riotcontrol'
+import CommentStore from './Store/CommentStore'
+import CommentAction from './Action/CommentAction'
+import request from 'superagent'
+
+const commentAction = new CommentAction()
+
 <channel>
-  <div show={!channel || !comments} class="loading-filter">
+  <div show={loading} class="loading-filter">
     <div class="alert alert-info"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading ...</div>
   </div>
+
+  <div class="alert alert-danger" show={error}>Cannot find channel !</div>
 
   <virtual if={channel}>
     <div class="row">
@@ -19,7 +28,7 @@
       <li each={comments}>
         <div>
           <strong>{author_name}</strong> <span>{created_at}</span>
-          <a onClick={confirmDeleteComment} class="glyphicon glyphicon-remove" href="#"></a>
+          <a onClick={deleteComment} class="glyphicon glyphicon-remove" href="#"></a>
         </div>
         <pre>{body}</pre>
       </li>
@@ -41,37 +50,17 @@
   </div>
 
   <script>
-    const request = require('superagent')
-    const moment = require('moment')
-
-    comments_path() {
-      return "/channels/" + this.channel.id + "/comments"
-    }
-
-    fetchComments() {
-      request.get(this.comments_path(), (err, res) => {
-        if (err) return false
-        let comments = res.body.map( (comment) => {
-          comment.author_name = comment.author_name || 'anonymous'
-          comment.created_at = moment(comment.created_at).format('MM/DD HH:mm')
-          return comment
-        })
-        this.update({comments})
-        this.scrollToBottom()
-      })
-    }
-
     postComment(e) {
       e.preventDefault()
       let comment = {
         author_name: this.refs.author_name.value.trim(),
         body: this.refs.body.value.trim()
       }
-      if (comment.body != '')
+      commentAction.postComment(comment)
+      RiotControl.on('POSTED_COMMENT', () => {
         this.closeForm()
-        request.post(this.comments_path(), comment, (err, res) => {
-          this.fetchComments()
-        })
+        commentAction.reloadComments()
+      })
     }
 
     confirmDelete(e) {
@@ -80,13 +69,9 @@
         request.delete(`/channels/${this.channel.id}`, (err, res) => { location.href = '/' } )
     }
 
-    confirmDeleteComment(e) {
+    deleteComment(e) {
       e.preventDefault()
-      request.delete(`/comments/${e.item.id}`, (err, res) => {
-        let index = this.comments.findIndex( (comment) => comment.id == e.item.id )
-        this.comments.splice(index, 1)
-        this.update()
-      })
+      commentAction.deleteComment(e.item.id)
     }
 
     openForm() { this.editing = true }
@@ -97,17 +82,25 @@
       block.scrollTop = block.scrollHeight
     }
 
-    request.get(`/channels/${opts.slug}`, (err, res) => {
-      if (err) return false
-      this.update({channel: res.body})
-      this.fetchComments()
-    })
+    this.on('mount', () => {
+      this.loading = true
+      request.get(`/channels/${opts.slug}`, (err, res) => {
+        if (err) return this.update({error: true, loading: false})
 
+        this.update({channel: res.body})
+        commentAction.channel_id = this.channel.id
+
+        commentAction.reloadComments()
+        this.loading = true
+        RiotControl.on('RELOADED_COMMENTS', () => {
+          this.update({comments: CommentStore.getComments(), loading: false})
+          // this.scrollToBottom()
+        })
+      })
+    })
   </script>
 
   <style scoped>
-    :scope {
-    }
     .loading-filter {
       width: 100%;
       height: 100%;

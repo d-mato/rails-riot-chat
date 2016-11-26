@@ -3,6 +3,8 @@ import MenuStore from './Store/MenuStore'
 import MenuAction from './Action/MenuAction'
 import request from 'superagent'
 
+const menuAction = new MenuAction()
+
 <channels>
   <ul class="list-unstyled">
     <li each={items} class={isActive ? 'active' : ' '} ><a href="/#/channels/{slug}">{name}</a></li>
@@ -27,7 +29,7 @@ import request from 'superagent'
       if ((channel.name != '') && (channel.slug != ''))
         this.clearForm()
         request.post('/channels', channel, (err, res) => {
-          MenuAction.resetMenu()
+          menuAction.reloadMenu()
         })
     }
 
@@ -37,8 +39,7 @@ import request from 'superagent'
     }
 
     this.on('mount', () => {
-      this.items = []
-      MenuAction.resetMenu()
+      menuAction.reloadMenu()
       RiotControl.on('UPDATED_MENU', () => {
         this.update({items: MenuStore.getMenu()})
       })

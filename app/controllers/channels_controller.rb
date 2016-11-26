@@ -8,7 +8,7 @@ class ChannelsController < ApplicationController
 
   # GET /channels/1
   def show
-    @channel = Channel.find_by(slug: params[:id])
+    @channel = Channel.find_by!(slug: params[:id])
     render json: @channel
   end
 

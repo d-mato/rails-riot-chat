@@ -8,7 +8,6 @@ let _menu = []
 const _fetch_channels = () => {
   request.get('/channels', (err, res) => {
     _channels = res.body
-    RiotControl.trigger('UPDATED_CHANNELS')
     _update_menu()
   })
 }
@@ -29,7 +28,7 @@ class MenuStore {
   constructor() {
     riot.observable(this)
 
-    this.on('RESET_MENU', _fetch_channels)
+    this.on('RELOAD_MENU', _fetch_channels)
     this.on('CHANGE_PAGE', _update_menu)
   }
   getMenu() { return _menu }
