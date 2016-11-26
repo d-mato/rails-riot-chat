@@ -3,6 +3,7 @@ import CommentStore from './Store/CommentStore'
 import CommentAction from './Action/CommentAction'
 import MenuAction from './Action/MenuAction'
 import request from 'superagent'
+import moment from 'moment'
 
 const commentAction = new CommentAction()
 const menuAction = new MenuAction()
@@ -26,8 +27,12 @@ const menuAction = new MenuAction()
         <input value={channel.name} show={editing_channnel_name} onchange={updateChannelName} onblur={updateChannelName}/>
       </h2>
 
-      <div class="col-xs-4">
-        <small>Created_at: {channel.created_at}</small>
+      <div class="col-xs-4 channel-stats">
+        <h4>Channel Stats</h4>
+        <ul class="list-unstyled">
+          <li><small>Created: {channel.created_at}</small></li>
+          <li><small if={comments}>Total comments: {comments.length}</small></li>
+        </ul>
       </div>
     </div>
 
@@ -110,6 +115,8 @@ const menuAction = new MenuAction()
       request.get(`/channels/${opts.slug}`, (err, res) => {
         if (err) return this.update({error: true, loading: false})
 
+        let channel = res.body
+        channel.created_at = moment(channel.created_at).format('YYYY-MM-DD HH:mm:ss')
         this.update({channel: res.body})
         commentAction.channel_id = this.channel.id
 
@@ -161,6 +168,14 @@ const menuAction = new MenuAction()
     h2.channel_name { cursor: pointer; }
     h2.channel_name .glyphicon-remove { font-size: 15px; display: none; }
     h2.channel_name:hover .glyphicon-remove { display: inline ; }
+
+    .channel-stats h4 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .channel-stats ul {
+      margin-left: 15px;
+    }
 
     ul.comments {
       overflow-y: scroll;
