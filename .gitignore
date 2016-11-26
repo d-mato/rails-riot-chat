@@ -21,7 +21,7 @@
 .byebug_history
 
 /vendor/bundle
-/frontend/node_modules
+/node_modules
 
 /public/bundle.js
 /public/*.woff2
