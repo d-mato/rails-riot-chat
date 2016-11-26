@@ -1,4 +1,8 @@
 <channel>
+  <div show={!channel || !comments} class="loading-filter">
+    <div class="alert alert-info"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading ...</div>
+  </div>
+
   <virtual if={channel}>
     <div class="row">
       <h2 class="channel_name col-xs-8">
@@ -20,11 +24,12 @@
         <pre>{body}</pre>
       </li>
     </ul>
+
+    <div class="footer">
+      <button class="btn btn-default btn-sm" onClick={openForm}>Post comment</button>
+    </div>
   </virtual>
 
-  <div class="footer">
-    <button class="btn btn-default btn-sm" onClick={openForm}>Post comment</button>
-  </div>
   <div class="panel panel-default" id="form-panel" if={editing}>
     <div class="panel-heading">Post comment <span onClick={closeForm} class="btn glyphicon glyphicon-remove pull-right" style="padding:0"></span></div>
     <form class="panel-body" onSubmit={postComment}>
@@ -63,9 +68,9 @@
         body: this.refs.body.value.trim()
       }
       if (comment.body != '')
+        this.closeForm()
         request.post(this.comments_path(), comment, (err, res) => {
           this.fetchComments()
-          this.closeForm()
         })
     }
 
@@ -102,6 +107,19 @@
 
   <style scoped>
     :scope {
+    }
+    .loading-filter {
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.7);
+      position: absolute;
+      margin-left: -15px;
+      z-index: 2;
+    }
+    .loading-filter .alert {
+      text-align: center;
+      width: 200px;
+      margin: 20% auto;
     }
 
     h2.channel_name .glyphicon-remove { font-size: 15px; display: none; }
