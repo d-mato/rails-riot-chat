@@ -16,9 +16,9 @@ module.exports = {
     }),
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.AggressiveMergingPlugin(),
-    // new webpack.optimize.UglifyJsPlugin(),
   ],
   module: {
+    noParse: [/moment.js/],
     loaders: [
       { test: /\.tag$/, loader: `babel?${JSON.stringify(babel_options)}!riotjs` },
       { test: /\.js$/, loader: `babel?${JSON.stringify(babel_options)}` },
