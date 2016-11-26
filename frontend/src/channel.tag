@@ -1,9 +1,11 @@
 import RiotControl from 'riotcontrol'
 import CommentStore from './Store/CommentStore'
 import CommentAction from './Action/CommentAction'
+import MenuAction from './Action/MenuAction'
 import request from 'superagent'
 
 const commentAction = new CommentAction()
+const menuAction = new MenuAction()
 
 <channel>
   <div show={loading} class="loading-filter">
@@ -14,10 +16,16 @@ const commentAction = new CommentAction()
 
   <virtual if={channel}>
     <div class="row">
-      <h2 class="channel_name col-xs-8">
-        Channel: {channel.name}
-        <a onClick={confirmDelete} class="glyphicon glyphicon-remove" href="#"></a>
+      <h2 class="channel_name col-xs-7">
+        Channel:
+        <virtual show={!editing_channnel_name}>
+          <span class="" onclick={editChannelName}>{channel.name}</span>
+          <a onclick={confirmDelete} class="glyphicon glyphicon-remove" href="#"></a>
+        </virtual>
+
+        <input value={channel.name} show={editing_channnel_name} onchange={updateChannelName} onblur={updateChannelName}/>
       </h2>
+
       <div class="col-xs-4">
         <small>Created_at: {channel.created_at}</small>
       </div>
@@ -28,19 +36,19 @@ const commentAction = new CommentAction()
       <li each={comments}>
         <div>
           <strong>{author_name}</strong> <span>{created_at}</span>
-          <a onClick={deleteComment} class="glyphicon glyphicon-remove" href="#"></a>
+          <a onclick={deleteComment} class="glyphicon glyphicon-remove" href="#"></a>
         </div>
         <pre>{body}</pre>
       </li>
     </ul>
 
     <div class="footer">
-      <button class="btn btn-default btn-sm" onClick={openForm}>Post comment</button>
+      <button class="btn btn-default btn-sm" onclick={openForm}>Post comment</button>
     </div>
   </virtual>
 
   <div class="panel panel-default" id="form-panel" if={editing}>
-    <div class="panel-heading">Post comment <span onClick={closeForm} class="btn glyphicon glyphicon-remove pull-right" style="padding:0"></span></div>
+    <div class="panel-heading">Post comment <span onclick={closeForm} class="btn glyphicon glyphicon-remove pull-right" style="padding:0"></span></div>
     <form class="panel-body" onSubmit={postComment}>
       <label>name:</label> <input ref="author_name" class="form-control" placeholder="anonymous"/>
       <label>comment:</label>
@@ -77,6 +85,21 @@ const commentAction = new CommentAction()
     scrollToBottom() {
       let block = document.querySelector('ul.comments')
       block.scrollTop = block.scrollHeight
+    }
+
+    editChannelName(e) {
+      this.editing_channnel_name = true
+    }
+
+    updateChannelName(e) {
+      this.editing_channnel_name = false
+      if (this.channel.name == e.target.value) return false
+      request.patch(`/channels/${this.channel.id}`, {name: e.target.value}, (err, res) => {
+        if (!err) {
+          this.update({channel: res.body})
+          menuAction.reloadMenu()
+        }
+      })
     }
 
     this.on('mount', () => {
@@ -126,6 +149,7 @@ const commentAction = new CommentAction()
       margin: 20% auto;
     }
 
+    h2.channel_name { cursor: pointer; }
     h2.channel_name .glyphicon-remove { font-size: 15px; display: none; }
     h2.channel_name:hover .glyphicon-remove { display: inline ; }
 
