@@ -1,6 +1,6 @@
 <channels>
-  <ul>
-    <li each={items}><a href="/#/channels/{slug}">{name}</a></li>
+  <ul class="list-unstyled">
+    <li each={items} class={isActive ? 'active' : ' '} ><a href="/#/channels/{slug}">{name}</a></li>
   </ul>
 
   <hr/>
@@ -14,6 +14,15 @@
 
   <script>
     const request = require('superagent')
+    const route = require('riot-route')
+
+    route('/channels/*', (slug) => {
+      let items = this.items.map( (item) => {
+        item.isActive = (item.slug == slug)
+        return item
+      })
+      this.update({items})
+    })
 
     fetchChannels() {
       request.get('/channels', (err, res) => this.update({items: res.body}) )
@@ -40,5 +49,23 @@
     this.items = []
     this.fetchChannels()
   </script>
+
+  <style scoped>
+    a, a:focus, a:active {
+      color: #aaa;
+      text-decoration: none;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    li.active a {
+      color: #fff;
+      font-weight: bold;
+    }
+    ul {
+      margin-left: 10px;
+    }
+  </style>
 
 </channels>
