@@ -1,3 +1,8 @@
+import RiotControl from 'riotcontrol'
+import MenuStore from './Store/MenuStore'
+import MenuAction from './Action/MenuAction'
+import request from 'superagent'
+
 <channels>
   <ul class="list-unstyled">
     <li each={items} class={isActive ? 'active' : ' '} ><a href="/#/channels/{slug}">{name}</a></li>
@@ -13,21 +18,6 @@
   </form>
 
   <script>
-    const request = require('superagent')
-    const route = require('riot-route')
-
-    route('/channels/*', (slug) => {
-      let items = this.items.map( (item) => {
-        item.isActive = (item.slug == slug)
-        return item
-      })
-      this.update({items})
-    })
-
-    fetchChannels() {
-      request.get('/channels', (err, res) => this.update({items: res.body}) )
-    }
-
     createChannel(e) {
       e.preventDefault()
       let channel = {
@@ -35,9 +25,9 @@
         slug: this.refs.slug.value.trim()
       }
       if ((channel.name != '') && (channel.slug != ''))
+        this.clearForm()
         request.post('/channels', channel, (err, res) => {
-          this.fetchChannels()
-          this.clearForm()
+          MenuAction.resetMenu()
         })
     }
 
@@ -46,8 +36,13 @@
       this.refs.slug.value = ""
     }
 
-    this.items = []
-    this.fetchChannels()
+    this.on('mount', () => {
+      this.items = []
+      MenuAction.resetMenu()
+      RiotControl.on('UPDATED_MENU', () => {
+        this.update({items: MenuStore.getMenu()})
+      })
+    })
   </script>
 
   <style scoped>

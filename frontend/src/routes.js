@@ -1,7 +1,9 @@
 require('./channel.tag')
-const route = require('riot-route')
+import route from 'riot-route'
+import MenuAction from './Action/MenuAction'
 
 route('/channels/*', (slug) => {
   riot.mount('main', 'channel', { slug } )
+  MenuAction.changePage(slug)
 })
 route.start(true)

@@ -14,12 +14,12 @@ module.exports = {
   ],
   module: {
     preLoaders: [
-      { test: /\.tag$/, exclude: /node_modules/, loader: 'riotjs-loader' }
+      { test: /\.tag$/, exclude: /node_modules/, loader: 'riotjs' }
     ],
     loaders: [
-      { test: /\.js$|\.tag$/, exclude: /node_modules/, loader: 'babel-loader' },
-      { test: /\.css$/, loader: 'style-loader!css-loader' },
-      { test: /\.(eot|woff2?|ttf|svg)$/, loader: 'file-loader' },
+      { test: /\.js$|\.tag$/, exclude: /node_modules/, loader: 'babel', query: { presets: ['es2015'] } },
+      { test: /\.css$/, loader: 'style!css' },
+      { test: /\.(eot|woff2?|ttf|svg)$/, loader: 'file' },
     ]
   },
 
