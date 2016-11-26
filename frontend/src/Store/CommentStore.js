@@ -18,18 +18,24 @@ const _fetch_comments = (channel_id) => {
 }
 
 const _post_comment = (comment, channel_id) => {
-  if (comment.body == '') return false
+  if (comment.body == '') {
+    RiotControl.trigger('FAILED_POST_COMMENT', 'body is empty')
+    return false
+  }
   request.post(_comments_path(channel_id), comment, (err, res) => {
-    if (!err) RiotControl.trigger('POSTED_COMMENT')
+    if (err) RiotControl.trigger('FAILED_POST_COMMENT', err)
+    else {
+      RiotControl.trigger('POSTED_COMMENT')
+      _fetch_comments(channel_id)
+    }
   })
 }
 
 const _delete_comment = (comment_id) => {
   request.delete(`/comments/${comment_id}`, (err, res) => {
-    if (!err) RiotControl.trigger('DELETED_COMMENT')
     let index = _comments.findIndex( (comment) => comment.id == comment_id )
     _comments.splice(index, 1)
-    RiotControl.trigger('RELOADED_COMMENTS')
+    if (!err) RiotControl.trigger('DELETED_COMMENT')
   })
 }
 

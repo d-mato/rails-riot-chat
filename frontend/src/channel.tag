@@ -45,7 +45,7 @@ const commentAction = new CommentAction()
       <label>name:</label> <input ref="author_name" class="form-control" placeholder="anonymous"/>
       <label>comment:</label>
       <textarea ref="body" class="form-control" rows="3"/>
-      <button class="btn btn-primary" type="submit">Post</button>
+      <button class="btn btn-primary" type="submit" ref="submit_btn">Post</button>
     </form>
   </div>
 
@@ -56,11 +56,8 @@ const commentAction = new CommentAction()
         author_name: this.refs.author_name.value.trim(),
         body: this.refs.body.value.trim()
       }
+      this.refs.submit_btn.disabled = true
       commentAction.postComment(comment)
-      RiotControl.on('POSTED_COMMENT', () => {
-        this.closeForm()
-        commentAction.reloadComments()
-      })
     }
 
     confirmDelete(e) {
@@ -92,10 +89,24 @@ const commentAction = new CommentAction()
 
         commentAction.reloadComments()
         this.loading = true
-        RiotControl.on('RELOADED_COMMENTS', () => {
-          this.update({comments: CommentStore.getComments(), loading: false})
-          // this.scrollToBottom()
-        })
+      })
+
+      RiotControl.on('RELOADED_COMMENTS', () => {
+        this.update({comments: CommentStore.getComments(), loading: false})
+        this.scrollToBottom()
+      })
+
+      RiotControl.on('POSTED_COMMENT', () => {
+        this.closeForm()
+      })
+
+      RiotControl.on('FAILED_POST_COMMENT', (err) => {
+        this.refs.submit_btn.disabled = false
+        console.log(err)
+      })
+
+      RiotControl.on('DELETED_COMMENT', () => {
+        this.update({comments: CommentStore.getComments()})
       })
     })
   </script>
