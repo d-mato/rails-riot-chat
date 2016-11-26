@@ -12,3 +12,19 @@
   from { transform: scale(1) rotate(0deg);}
   to { transform: scale(1) rotate(360deg);}
 }
+
+.fade-out {
+  animation: fadeout .5s ease;
+  max-height: 0;
+  overflow: hidden;
+}
+
+@keyframes fadeout {
+  from {
+    max-height: 100%;
+  }
+  to {
+    opacity: 0;
+    background-color: #08022d;
+  }
+}

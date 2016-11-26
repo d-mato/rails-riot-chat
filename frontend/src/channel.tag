@@ -36,7 +36,7 @@ const menuAction = new MenuAction()
 
     <div class="alert alert-warning" show={comments && !comments.length}>No comments!</div>
     <ul class="comments list-unstyled">
-      <li each={comments}>
+      <li each={comments} ref="comment_{id}">
         <div>
           <strong>{author_name}</strong> <span>{created_at}</span>
           <a onclick={deleteComment} class="glyphicon glyphicon-remove" href="#"></a>
@@ -82,7 +82,10 @@ const menuAction = new MenuAction()
 
     deleteComment(e) {
       e.preventDefault()
-      commentAction.deleteComment(e.item.id)
+      this.refs[`comment_${e.item.id}`].classList.add('fade-out')
+      setTimeout(() => {
+        commentAction.deleteComment(e.item.id)
+      }, 1000)
     }
 
     openForm() { this.editing = true }

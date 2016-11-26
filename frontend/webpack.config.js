@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-const babel_options = { presets: ['es2015'] }
+const babel_options = { presets: ['es2015'], compact: false }
 
 module.exports = {
   entry: `${__dirname}/src/index`,

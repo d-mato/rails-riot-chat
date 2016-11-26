@@ -26,7 +26,7 @@ const _post_comment = (comment, channel_id) => {
     if (err) RiotControl.trigger('FAILED_POST_COMMENT', err)
     else {
       RiotControl.trigger('POSTED_COMMENT')
-      _comments.push(_format_comment(comment))
+      _comments.push(_format_comment(res.body))
       RiotControl.trigger('RELOADED_COMMENTS')
     }
   })
