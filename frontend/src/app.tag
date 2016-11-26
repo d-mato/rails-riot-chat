@@ -1,5 +1,4 @@
 require('./sidebar.tag')
-require('./main.tag')
 
 <app>
   <div class="container">

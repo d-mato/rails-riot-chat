@@ -71,7 +71,10 @@ const menuAction = new MenuAction()
     confirmDelete(e) {
       e.preventDefault()
       if (confirm('Are you sure to delete this channel ?'))
-        request.delete(`/channels/${this.channel.id}`, (err, res) => { location.href = '/' } )
+        request.delete(`/channels/${this.channel.id}`, (err, res) => {
+          location.href = '/#/'
+          menuAction.reloadMenu()
+        })
     }
 
     deleteComment(e) {
@@ -111,7 +114,6 @@ const menuAction = new MenuAction()
         commentAction.channel_id = this.channel.id
 
         commentAction.reloadComments()
-        this.loading = true
       })
 
       RiotControl.on('RELOADED_COMMENTS', () => {
@@ -131,6 +133,13 @@ const menuAction = new MenuAction()
       RiotControl.on('DELETED_COMMENT', () => {
         this.update({comments: CommentStore.getComments()})
       })
+    })
+
+    this.on('unmount', () => {
+      RiotControl.off('RELOADED_COMMENTS')
+      RiotControl.off('POSTED_COMMENT')
+      RiotControl.off('FAILED_POST_COMMENT')
+      RiotControl.off('DELETED_COMMENT')
     })
   </script>
 

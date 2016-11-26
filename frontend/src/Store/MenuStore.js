@@ -2,23 +2,22 @@ import RiotControl from 'riotcontrol'
 import request from 'superagent'
 
 let _channels = []
-let _current_channel = ''
-let _menu = []
+let _menu = {}
 
 const _fetch_channels = () => {
   request.get('/channels', (err, res) => {
     _channels = res.body
-    _update_menu()
+    _update_menu(_menu.current_page)
   })
 }
 
 const _update_menu = (slug) => {
-  if (slug) _current_channel = slug
-  _menu = _channels.map( (channel) => {
+  _menu.current_page = slug
+  _menu.channels = _channels.map( (channel) => {
     return {
       slug: channel.slug,
       name: channel.name,
-      isActive: channel.slug == _current_channel
+      isActive: channel.slug == _menu.current_page
     }
   })
   RiotControl.trigger('UPDATED_MENU')

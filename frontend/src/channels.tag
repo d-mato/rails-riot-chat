@@ -1,5 +1,3 @@
-import RiotControl from 'riotcontrol'
-import MenuStore from './Store/MenuStore'
 import MenuAction from './Action/MenuAction'
 import request from 'superagent'
 
@@ -7,14 +5,14 @@ const menuAction = new MenuAction()
 
 <channels>
   <ul class="list-unstyled">
-    <li each={items} class={isActive ? 'active' : ' '} ><a href="/#/channels/{slug}">{name}</a></li>
+    <li each={opts.items} class={isActive ? 'active' : ' '} ><a href="/#/channels/{slug}">{name}</a></li>
   </ul>
 
   <hr/>
 
   <span>Add channel</span>
   <form onSubmit={createChannel}>
-    <label>name:</label> <input type="text" ref="name"/>
+    <label>name:</label> <input type="text" ref="name" onkeyup={autoFillSlug} />
     <label>slug:</label> <input type="text" ref="slug"/>
     <button class="btn btn-primary" type="submit">Create</button>
   </form>
@@ -26,11 +24,13 @@ const menuAction = new MenuAction()
         name: this.refs.name.value.trim(),
         slug: this.refs.slug.value.trim()
       }
-      if ((channel.name != '') && (channel.slug != ''))
+      if ((channel.name != '') && (channel.slug != '')) {
         this.clearForm()
         request.post('/channels', channel, (err, res) => {
           menuAction.reloadMenu()
+          location.href = `/#/channels/${res.body.slug}`
         })
+      }
     }
 
     clearForm() {
@@ -38,30 +38,13 @@ const menuAction = new MenuAction()
       this.refs.slug.value = ""
     }
 
-    this.on('mount', () => {
-      menuAction.reloadMenu()
-      RiotControl.on('UPDATED_MENU', () => {
-        this.update({items: MenuStore.getMenu()})
-      })
-    })
+    autoFillSlug() {
+      let slug = this.refs.name.value.toLowerCase().replace(/[\-\s]/g, '_').replace(/[^\w_]/g, '')
+      this.refs.slug.value = slug
+    }
   </script>
 
   <style scoped>
-    a, a:focus, a:active {
-      color: #aaa;
-      text-decoration: none;
-    }
-    a:hover {
-      color: #fff;
-      text-decoration: none;
-    }
-    li.active a {
-      color: #fff;
-      font-weight: bold;
-    }
-    ul {
-      margin-left: 10px;
-    }
   </style>
 
 </channels>
