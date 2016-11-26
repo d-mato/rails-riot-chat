@@ -14,4 +14,5 @@ route('/channels/*', (slug) => {
   riot.mount('main', 'channel', { slug } )
   menuAction.changePage(slug)
 })
+
 route.start(true)

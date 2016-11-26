@@ -1,5 +1,4 @@
 import MenuAction from './Action/MenuAction'
-import request from 'superagent'
 
 const menuAction = new MenuAction()
 

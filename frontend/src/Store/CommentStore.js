@@ -1,6 +1,4 @@
 import RiotControl from 'riotcontrol'
-import request from 'superagent'
-import moment from 'moment'
 
 let _comments = []
 

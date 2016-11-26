@@ -1,5 +1,4 @@
 import RiotControl from 'riotcontrol'
-import request from 'superagent'
 
 let _channels = []
 let _menu = {}

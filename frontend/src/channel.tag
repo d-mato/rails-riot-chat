@@ -2,8 +2,6 @@ import RiotControl from 'riotcontrol'
 import CommentStore from './Store/CommentStore'
 import CommentAction from './Action/CommentAction'
 import MenuAction from './Action/MenuAction'
-import request from 'superagent'
-import moment from 'moment'
 
 const commentAction = new CommentAction()
 const menuAction = new MenuAction()
