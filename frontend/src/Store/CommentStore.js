@@ -6,13 +6,15 @@ let _comments = []
 
 const _comments_path = (channel_id) => `/channels/${channel_id}/comments`
 
+const _format_comment = (comment) => {
+  comment.author_name = comment.author_name || 'anonymous'
+  comment.created_at = moment(comment.created_at).format('MM/DD HH:mm')
+  return comment
+}
+
 const _fetch_comments = (channel_id) => {
   request.get(_comments_path(channel_id), (err, res) => {
-    _comments = res.body.map( (comment) => {
-      comment.author_name = comment.author_name || 'anonymous'
-      comment.created_at = moment(comment.created_at).format('MM/DD HH:mm')
-      return comment
-    })
+    _comments = res.body.map(_format_comment)
     RiotControl.trigger('RELOADED_COMMENTS')
   })
 }
@@ -26,7 +28,8 @@ const _post_comment = (comment, channel_id) => {
     if (err) RiotControl.trigger('FAILED_POST_COMMENT', err)
     else {
       RiotControl.trigger('POSTED_COMMENT')
-      _fetch_comments(channel_id)
+      _comments.push(_format_comment(comment))
+      RiotControl.trigger('RELOADED_COMMENTS')
     }
   })
 }
