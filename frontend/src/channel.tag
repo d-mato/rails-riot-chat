@@ -1,6 +1,3 @@
-require('./comments.tag')
-require('./comment-form.tag')
-
 <channel>
   <div show={loading} class="loading-filter">
     <div class="alert alert-info"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading ...</div>
@@ -9,8 +6,8 @@ require('./comment-form.tag')
   <div class="alert alert-danger" show={error}>Cannot find channel !</div>
 
   <virtual if={channel}>
-    <div class="row">
-      <h2 class="channel_name col-xs-7">
+    <div class="row channel-header">
+      <h2 class="channel_name col-xs-8">
         Channel:
         <virtual show={!editing_channnel_name}>
           <span class="" onclick={editChannelName}>{channel.name}</span>
@@ -21,7 +18,6 @@ require('./comment-form.tag')
       </h2>
 
       <div class="col-xs-4 channel-stats">
-        <h4>Channel Stats</h4>
         <ul class="list-unstyled">
           <li><small>Created: {channel.created_at}</small></li>
           <li><small if={comments}>Total comments: {comments.length}</small></li>
@@ -48,18 +44,15 @@ require('./comment-form.tag')
       width: 200px;
       margin: 20% auto;
     }
-
-    h2.channel_name { cursor: pointer; }
+    .channel-header {
+    }
+    h2.channel_name {
+      cursor: pointer;
+      font-size: 2.2rem;
+    }
     h2.channel_name .glyphicon-remove { font-size: 15px; display: none; }
-    h2.channel_name:hover .glyphicon-remove { display: inline ; }
-
-    .channel-stats h4 {
-      margin: 0;
-      font-size: 1.5rem;
-    }
-    .channel-stats ul {
-      margin-left: 15px;
-    }
+    h2.channel_name:hover .glyphicon-remove { display: inline; }
+    .channel-stats ul { margin: 10px 0 0 0; }
   </style>
 
   import RiotControl from 'riotcontrol'
@@ -69,9 +62,6 @@ require('./comment-form.tag')
 
   const commentAction = new CommentAction()
   const menuAction = new MenuAction()
-
-  require('./comments.tag')
-  require('./comment-form.tag')
 
   confirmDelete(e) {
     e.preventDefault()

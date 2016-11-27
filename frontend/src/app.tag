@@ -1,5 +1,3 @@
-require('./sidebar.tag')
-
 <app>
   <div class="container">
     <div class="row">
