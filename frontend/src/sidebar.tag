@@ -4,25 +4,29 @@ import MenuAction from './Action/MenuAction'
 
 const menuAction = new MenuAction()
 
-require('./channels.tag')
-
 <sidebar>
   <h2><a href="/#/">rails-riot-chat</a></h2>
+
+  <a href="#" onclick={tags.signin.toggle}>Sign in <span class="glyphicon glyphicon-user"></span></a>
+  <signin></signin>
 
   <h3 class={active: (menu.current_page == '')}><a href="/#/">Home</a></h3>
 
   <h3>Channels</h3>
   <channels items={menu.channels}></channels>
 
-  <script>
-    this.menu = {}
-    this.on('mount', () => {
-      menuAction.reloadMenu()
-      RiotControl.on('UPDATED_MENU', () => {
-        this.update({menu: MenuStore.getMenu()})
-      })
-    })
-  </script>
+  <hr/>
+
+  <a href="#" onclick={toggleChannelForm}>Add channel <span class="glyphicon glyphicon-plus-sign"></span></a>
+  <form onsubmit={createChannel} ref="channelForm" if={form_shown}>
+    <label>name:</label> <input class="form-control" ref="name" onkeyup={autoFillSlug} />
+    <label>slug:</label> <input class="form-control" ref="slug"/>
+    <button class="btn btn-primary" type="submit">Create</button>
+  </form>
+
+  <hr/>
+
+  <h3 class={active: (menu.current_page == 'registration')}><a href="/#/registration">User Registration</a></h3>
 
   <style scoped>
     span, label {
@@ -51,9 +55,40 @@ require('./channels.tag')
       color: #fff;
       font-weight: bold;
     }
-    ul {
-      margin-left: 10px;
-    }
 
   </style>
+
+  createChannel(e) {
+    e.preventDefault()
+    let channel = {
+      name: this.refs.name.value.trim(),
+      slug: this.refs.slug.value.trim()
+    }
+    if ((channel.name != '') && (channel.slug != '')) {
+      request.post('/channels', channel, (err, res) => {
+        this.form_shown = false
+        if (err) return console.log(err)
+        menuAction.reloadMenu()
+        location.href = `/#/channels/${res.body.slug}`
+      })
+    }
+  }
+
+  toggleChannelForm(e) {
+    e.preventDefault()
+    this.form_shown = !this.form_shown
+  }
+
+  autoFillSlug() {
+    let slug = this.refs.name.value.toLowerCase().replace(/[\-\s]/g, '_').replace(/[^\w_]/g, '')
+    this.refs.slug.value = slug
+  }
+
+  this.menu = {}
+  this.on('mount', () => {
+    RiotControl.on('UPDATED_MENU', () => {
+      this.update({menu: MenuStore.getMenu()})
+    })
+    menuAction.reloadMenu()
+  })
 </sidebar>
