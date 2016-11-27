@@ -9,7 +9,7 @@ require('./channels.tag')
 <sidebar>
   <h2><a href="/#/">rails-riot-chat</a></h2>
 
-  <h3 class={menu.current_page == '' ? 'active' : ' '}><a href="/#/">Home</a></h3>
+  <h3 class={active: (menu.current_page == '')}><a href="/#/">Home</a></h3>
 
   <h3>Channels</h3>
   <channels items={menu.channels}></channels>
