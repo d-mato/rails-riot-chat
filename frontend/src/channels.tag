@@ -25,8 +25,9 @@
       slug: this.refs.slug.value.trim()
     }
     if ((channel.name != '') && (channel.slug != '')) {
-      this.clearForm()
       request.post('/channels', channel, (err, res) => {
+        this.clearForm()
+        if (err) return console.log(err)
         menuAction.reloadMenu()
         location.href = `/#/channels/${res.body.slug}`
       })
