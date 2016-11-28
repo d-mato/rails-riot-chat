@@ -22,6 +22,7 @@ class CommentsController < ApplicationController
   def create
     @comment = Comment.new(comment_params)
     @comment.channel = Channel.find(params[:channel_id])
+    @comment.user = current_user if user_signed_in?
 
     if @comment.save
       render json: @comment, status: :created

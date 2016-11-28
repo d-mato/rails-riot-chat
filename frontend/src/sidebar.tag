@@ -67,7 +67,7 @@ const menuAction = new MenuAction()
       slug: this.refs.slug.value.trim()
     }
     if ((channel.name != '') && (channel.slug != '')) {
-      request.post('/channels', channel, (err, res) => {
+      request.post('/channels', channel).set(AuthStore.getHeaders()).end((err, res) => {
         this.form_shown = false
         if (err) return console.log(err)
         menuAction.reloadMenu()
@@ -78,7 +78,10 @@ const menuAction = new MenuAction()
 
   toggleChannelForm(e) {
     e.preventDefault()
-    this.form_shown = !this.form_shown
+    if (AuthStore.isSignedIn())
+      this.form_shown = !this.form_shown
+    else
+      alert('チャンネルを作成するにはログインしてください')
   }
 
   autoFillSlug() {

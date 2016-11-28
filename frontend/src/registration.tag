@@ -13,11 +13,23 @@
     </div>
 
     <button type="submit" class="btn btn-success">Sign Up</button>
+
   </form>
+  <div class="alert alert-success" show={this.success}>Sign up successfully!</div>
+  <div class="alert alert-danger" show={this.error_messages}>
+    <ul>
+      <li each={msg in this.error_messages}>{msg}</li>
+    </ul>
+  </div>
 
   <style scoped>
     form { width: 300px; }
   </style>
+
+  import RiotControl from 'riotcontrol'
+  import AuthStore from './Store/AuthStore'
+  import AuthAction from './Action/AuthAction'
+  const authAction = new AuthAction()
 
   post(e) {
     e.preventDefault()
@@ -25,9 +37,14 @@
       email: this.refs.email.value,
       password: this.refs.password.value
     }
-    request.post('/auth', user, (err, res) => {
-      if (err) return console.log(err)
-      console.log(res.body)
-    })
+    authAction.sign_up(user)
   }
+
+  RiotControl.on('USER_SIGNED_UP', () => {
+    this.update({success: true})
+    setTimeout(() => {location.href = '/#/'}, 2000)
+  })
+  RiotControl.on('FAILED_SIGN_UP', () => {
+    this.update({error_messages: AuthStore.getErrors()})
+  })
 </registration>

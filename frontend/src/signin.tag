@@ -32,7 +32,7 @@
       opacity: 0;
       width: 500px;
       left: 200px;
-      top: -200px;
+      top: -300px;
       z-index: 10;
       transition: all 0.3s;
     }

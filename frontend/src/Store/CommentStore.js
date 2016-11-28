@@ -31,7 +31,7 @@ class CommentStore {
       this.trigger('FAILED_POST_COMMENT', 'body is empty')
       return false
     }
-    request.post(_comments_path(channel_id), comment, (err, res) => {
+    request.post(_comments_path(channel_id), comment).set(AuthStore.getHeaders()).end((err, res) => {
       if (err) this.trigger('FAILED_POST_COMMENT', err)
       else {
         this.trigger('POSTED_COMMENT')

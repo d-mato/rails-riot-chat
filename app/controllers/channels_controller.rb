@@ -15,6 +15,7 @@ class ChannelsController < ApplicationController
   # POST /channels
   def create
     @channel = Channel.new(channel_params)
+    @channel.user = current_user
 
     if @channel.save
       render json: @channel, status: :created, location: @channel
