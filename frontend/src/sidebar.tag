@@ -1,4 +1,5 @@
 import RiotControl from 'riotcontrol'
+import AuthStore from './Store/AuthStore'
 import MenuStore from './Store/MenuStore'
 import MenuAction from './Action/MenuAction'
 
@@ -7,7 +8,8 @@ const menuAction = new MenuAction()
 <sidebar>
   <h2><a href="/#/">rails-riot-chat</a></h2>
 
-  <a href="#" onclick={tags.signin.toggle}>Sign in <span class="glyphicon glyphicon-user"></span></a>
+  <a href="#" onclick={tags.signin.toggle} show={!signed_in}>Sign in <span class="glyphicon glyphicon-user"></span></a>
+  <a href="#" show={signed_in}>ログイン中<span class="glyphicon glyphicon-user"></span></a>
   <signin></signin>
 
   <h3 class={active: (menu.current_page == '')}><a href="/#/">Home</a></h3>
@@ -88,6 +90,9 @@ const menuAction = new MenuAction()
   this.on('mount', () => {
     RiotControl.on('UPDATED_MENU', () => {
       this.update({menu: MenuStore.getMenu()})
+    })
+    RiotControl.on('USER_SIGNED_IN', () => {
+      this.update({signed_in: true})
     })
     menuAction.reloadMenu()
   })

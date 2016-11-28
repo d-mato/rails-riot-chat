@@ -1,5 +1,25 @@
-// window.request = require('superagent').agent()
+window.request = superagent
+// window.request = (RequestConstructor, method, url) => {
+//   return RequestConstructor('GET', method).set('client', auth.client).set('access-token', auth.access_token).end(url);
+// }
+// window.request.get = (url) => {
+//   return superagent.get(url)
+// }
+// window.request.get = function(url) {
+//   return superagent.get(url).set('client', auth.client).set('access-token', auth.access_token)
+// };;
 
+import RiotControl from 'riotcontrol'
+
+// Stores
+import AuthStore from './Store/AuthStore'
+import CommentStore from './Store/CommentStore'
+import MenuStore from './Store/MenuStore'
+RiotControl.addStore(AuthStore)
+RiotControl.addStore(CommentStore)
+RiotControl.addStore(MenuStore)
+
+// Tags
 require('bootstrap/dist/css/bootstrap.css')
 require('./css/animation.css')
 

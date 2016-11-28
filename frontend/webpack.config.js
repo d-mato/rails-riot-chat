@@ -12,7 +12,7 @@ module.exports = {
     new webpack.ProvidePlugin({
       riot: 'riot',
       moment: 'moment',
-      request: 'superagent',
+      superagent: 'superagent',
     }),
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.AggressiveMergingPlugin(),

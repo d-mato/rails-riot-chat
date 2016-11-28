@@ -8,7 +8,7 @@
         <form onsubmit={submit} if={!success}>
           <div class="form-group">
             <label>Email</label>
-            <input ref="email" type="email" class="form-control" value="user@example.com"/>
+            <input ref="email" type="email" class="form-control" value="user@mail.com"/>
           </div>
 
           <div class="form-group">
@@ -42,6 +42,11 @@
     }
   </style>
 
+  import RiotControl from 'riotcontrol'
+  import AuthStore from './Store/AuthStore'
+  import AuthAction from './Action/AuthAction'
+  const authAction = new AuthAction()
+
   toggle() { this.opend = !this.opend }
   close() { this.opend = false }
   submit(e) {
@@ -50,14 +55,17 @@
       email: this.refs.email.value,
       password: this.refs.password.value
     }
-    request.post('/users/sign_in', {user}, (err, res) => {
-      if (err) return console.log(err)
-
-      console.log(res)
-      this.update({success: true})
-      setTimeout(() => {
-        this.update({opend: false, success: false})
-      }, 1500)
-    })
+    authAction.sign_in(user)
   }
+
+  RiotControl.on('USER_SIGNED_IN', () => {
+    this.update({success: true})
+    setTimeout(() => {
+      this.update({opend: false, success: false})
+    }, 1500)
+  })
+
+  this.on('unmount', () => {
+    RiotControl.off('USER_SIGNED_IN')
+  })
 </signin>

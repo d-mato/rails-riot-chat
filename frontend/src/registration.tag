@@ -25,7 +25,7 @@
       email: this.refs.email.value,
       password: this.refs.password.value
     }
-    request.post('/users', {user}, (err, res) => {
+    request.post('/auth', user, (err, res) => {
       if (err) return console.log(err)
       console.log(res.body)
     })
