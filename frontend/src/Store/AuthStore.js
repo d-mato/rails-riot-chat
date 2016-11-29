@@ -26,7 +26,7 @@ class AuthStore {
   getErrors() { return errors }
 
   sign_in(user) {
-    request.post('/users/sign_in', {user}, (err, res) => {
+    request.post('/auth/sign_in', user, (err, res) => {
       if (err) {
         this.trigger('FAILED_SIGN_IN')
         return console.log(err)
@@ -39,7 +39,7 @@ class AuthStore {
   }
 
   sign_up(user) {
-    request.post('/users', {user}, (err, res) => {
+    request.post('/auth', user, (err, res) => {
       if (err) console.log(err)
       if (res.body && res.body.errors) {
         errors = res.body.errors.full_messages

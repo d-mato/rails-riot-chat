@@ -20,7 +20,7 @@ class CommentStore {
   getComments() { return _comments }
 
   fetch_comments(channel_id) {
-    request.get(_comments_path(channel_id)).end((err, res) => {
+    requestget(_comments_path(channel_id)).end((err, res) => {
       _comments = res.body.map(_format_comment)
       this.trigger('RELOADED_COMMENTS')
     })
