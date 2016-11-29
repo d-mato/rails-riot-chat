@@ -4,7 +4,7 @@
     <li each={opts.items} ref="comment_{id}">
       <div>
         <strong>{author_name}</strong> <span>{created_at}</span>
-        <a onclick={deleteComment} class="glyphicon glyphicon-remove" href="#"></a>
+        <a onclick={deleteComment} show={deletable} class="glyphicon glyphicon-remove" href="#"></a>
       </div>
       <pre>{body}</pre>
     </li>

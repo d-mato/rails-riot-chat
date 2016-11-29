@@ -20,7 +20,7 @@ class CommentStore {
   getComments() { return _comments }
 
   fetch_comments(channel_id) {
-    request.get(_comments_path(channel_id)).set(AuthStore.getHeaders()).end((err, res) => {
+    request.get(_comments_path(channel_id)).end((err, res) => {
       _comments = res.body.map(_format_comment)
       this.trigger('RELOADED_COMMENTS')
     })
@@ -31,7 +31,7 @@ class CommentStore {
       this.trigger('FAILED_POST_COMMENT', 'body is empty')
       return false
     }
-    request.post(_comments_path(channel_id), comment).set(AuthStore.getHeaders()).end((err, res) => {
+    request.post(_comments_path(channel_id), comment).end((err, res) => {
       if (err) this.trigger('FAILED_POST_COMMENT', err)
       else {
         this.trigger('POSTED_COMMENT')

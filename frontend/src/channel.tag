@@ -11,7 +11,7 @@
         Channel:
         <virtual show={!editing_channnel_name}>
           <span class="" onclick={editChannelName}>{channel.name}</span>
-          <a onclick={confirmDelete} class="glyphicon glyphicon-remove" href="#"></a>
+          <a onclick={confirmDelete} show={channel.deletable} class="glyphicon glyphicon-remove" href="#"></a>
         </virtual>
 
         <input value={channel.name} show={editing_channnel_name} onchange={updateChannelName} onblur={updateChannelName}/>
@@ -56,6 +56,8 @@
   </style>
 
   import RiotControl from 'riotcontrol'
+  import AuthStore from './Store/AuthStore'
+  import ChannelsStore from './Store/ChannelsStore'
   import CommentStore from './Store/CommentStore'
   import CommentAction from './Action/CommentAction'
   import MenuAction from './Action/MenuAction'
@@ -66,38 +68,40 @@
   confirmDelete(e) {
     e.preventDefault()
     if (confirm('Are you sure to delete this channel ?'))
-      request.delete(`/channels/${this.channel.id}`, (err, res) => {
-        location.href = '/#/'
-        menuAction.reloadMenu()
-      })
+      ChannelsStore.deleteChannel(this.channel.id)
   }
 
   editChannelName(e) {
-    this.editing_channnel_name = true
+    if (this.channel.editable ) this.editing_channnel_name = true
   }
 
   updateChannelName(e) {
     this.editing_channnel_name = false
     if (this.channel.name == e.target.value) return false
-    request.patch(`/channels/${this.channel.id}`, {name: e.target.value}, (err, res) => {
-      if (!err) {
-        this.update({channel: res.body})
-        menuAction.reloadMenu()
-      }
-    })
+    ChannelsStore.updateChannel(this.channel.id, {name: e.target.value})
   }
 
   this.on('mount', () => {
     this.loading = true
-    request.get(`/channels/${opts.slug}`, (err, res) => {
-      if (err) return this.update({error: true, loading: false})
+    ChannelsStore.fetchChannel(opts.slug)
 
-      let channel = res.body
-      channel.created_at = moment(channel.created_at).format('YYYY-MM-DD HH:mm:ss')
-      this.update({channel: res.body})
+    RiotControl.on('FAIL_FETCH_CHANNEL', () => {
+      this.update({error: true, loading: false})
+    })
+
+    RiotControl.on('FETCHED_CHANNEL', (channel) => {
+      this.update({channel})
       commentAction.channel_id = this.channel.id
-
       commentAction.reloadComments()
+    })
+
+    RiotControl.on('UPDATED_CHANNEL', (channel) => {
+      this.update({channel})
+      menuAction.reloadMenu()
+    })
+    RiotControl.on('DELETED_CHANNEL', () => {
+      location.href = '/#/'
+      menuAction.reloadMenu()
     })
 
     RiotControl.on('RELOADED_COMMENTS', () => {
@@ -111,6 +115,10 @@
   })
 
   this.on('unmount', () => {
+    RiotControl.off('FAIL_FETCH_CHANNEL')
+    RiotControl.off('FETCHED_CHANNEL')
+    RiotControl.off('UPDATED_CHANNEL')
+    RiotControl.off('DELETED_CHANNEL')
     RiotControl.off('RELOADED_COMMENTS')
     RiotControl.off('FAILED_POST_COMMENT')
     RiotControl.off('DELETED_COMMENT')

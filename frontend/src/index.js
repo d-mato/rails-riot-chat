@@ -1,4 +1,5 @@
 window.request = superagent
+
 // window.request = (RequestConstructor, method, url) => {
 //   return RequestConstructor('GET', method).set('client', auth.client).set('access-token', auth.access_token).end(url);
 // }
@@ -13,9 +14,11 @@ import RiotControl from 'riotcontrol'
 
 // Stores
 import AuthStore from './Store/AuthStore'
+import ChannelsStore from './Store/ChannelsStore'
 import CommentStore from './Store/CommentStore'
 import MenuStore from './Store/MenuStore'
 RiotControl.addStore(AuthStore)
+RiotControl.addStore(ChannelsStore)
 RiotControl.addStore(CommentStore)
 RiotControl.addStore(MenuStore)
 

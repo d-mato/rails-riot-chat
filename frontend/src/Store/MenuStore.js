@@ -1,3 +1,5 @@
+import AuthStore from './AuthStore'
+
 let _channels = []
 let _menu = {}
 
