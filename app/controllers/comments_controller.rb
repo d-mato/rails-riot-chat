@@ -4,10 +4,9 @@ class CommentsController < ApplicationController
   # GET /comments
   # GET /channels/:channel_id/comments
   def index
-    if params[:channel_id].present?
-      @comments = Channel.find(params[:channel_id]).comments
-    else
-      @comments = Comment.all
+    @comments = Channel.find(params[:channel_id]).comments
+    @comments = @comments.each do |comment|
+      comment.set_permission_for(current_user)
     end
 
     render json: @comments
