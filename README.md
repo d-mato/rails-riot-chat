@@ -1,3 +1,5 @@
+demo https://rails-riot-chat.herokuapp.com/
+
 keywords:
   - Rails5
   - api-mode
